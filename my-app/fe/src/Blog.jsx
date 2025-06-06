@@ -84,7 +84,13 @@ export default function Blog() {
             non-responders).<br></br>
             At this point, I would conclude that just by looking at the box
             plot, the b_cell, cd4_t_cell, and cd8_t_cell are the most
-            significantly different. <br></br>
+            significantly different. Mainly because the median of these
+            population are way off in comparison to cd8_t_cell and nk_cell. Not
+            only that, the fences of each group in these population don't even
+            intersect. If I have to choose which population is the most
+            different, that would be the monocyte where the median of the
+            responders group is 0.075 while the non-responders group is 0.28
+            <br></br>
           </p>
         </section>
         <section className="space-y-2">
@@ -160,19 +166,19 @@ export default function Blog() {
             WHERE s.sample_type = 'PBMC' AND s.cell_type = 'melanoma' <br></br>
             AND s.time_from_treatment = 0 AND s.treatment='tr1';<br></br>
           </p>
-          <h2 className="text-xl font-bold text-black p-4">Part 5a:</h2>
+          <h2 className="text-2xl font-bold text-black p-4">Part 5a:</h2>
           <p className="text-xl pl-2">
             SELECT o.project, COUNT(*) AS project, num_samples <br></br>
             FROM Overview o, q4 q <br></br>
             WHERE o.sample = q.sample <br></br>
             GROUP BY o.project;
           </p>
-          <h2 className="text-xl font-bold text-black p-4">Part 5b:</h2>
+          <h2 className="text-2xl font-bold text-black p-4">Part 5b:</h2>
           <p className="text-xl pl-2">
             SELECT response, COUNT(*) FROM q4 <br></br>
             GROUP BY response;
           </p>
-          <h2 className="text-xl font-bold text-black p-4">Part 5c:</h2>
+          <h2 className="text-2xl font-bold text-black p-4">Part 5c:</h2>
           <p className="text-xl pl-2">
             SELECT sex, COUNT(*) FROM q4 <br></br>
             GROUP BY sex;
