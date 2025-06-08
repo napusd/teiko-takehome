@@ -67,12 +67,16 @@ export default function SummaryView({ data }) {
   const diff = responderAvg - nonResponderAvg;
 
   let plotData = null;
+  let maxDiffCellType = null;
+  let maxDiffValue = null;
 
   if (data) {
     plotData = {};
     cellTypes.forEach((type) => {
       plotData[type] = { responders: [], nonresponders: [] };
     });
+    maxDiffValue = 0;
+    maxDiffCellType = "";
 
     for (let i = 0; i < samples.length; i++) {
       let sample = samples[i];
@@ -93,11 +97,13 @@ export default function SummaryView({ data }) {
         }
       }
     }
-    console.log(
-      Object.keys(plotData).flatMap((cell) =>
-        Array(plotData[cell].responders.length).fill(cell),
-      ),
-    );
+
+    for (const type of cellTypes) {
+      if (Math.abs(getAvg(type, "y") - getAvg(type, "n")) > maxDiffValue) {
+        maxDiffValue = Math.abs(getAvg(type, "y") - getAvg(type, "n"));
+        maxDiffCellType = type;
+      }
+    }
   }
 
   const renderTable = (title, rows) => {
@@ -144,9 +150,10 @@ export default function SummaryView({ data }) {
   };
 
   const renderPlot = function (plotData) {
-    if (!plotData || plotData.length === 0) {
+    if (!plotData || Object.keys(plotData).length === 0) {
       return <h2>Loading plots...</h2>;
     }
+
     return (
       <div className="flex justify-center">
         <div className="w-4/5 mx-auto p-8">
@@ -163,10 +170,10 @@ export default function SummaryView({ data }) {
               },
               {
                 x: Object.keys(plotData).flatMap((cell) =>
-                  Array(plotData[cell]["nonresponders"].length).fill(cell),
+                  Array(plotData[cell].nonresponders.length).fill(cell),
                 ),
                 y: Object.values(plotData).flatMap(
-                  (cell) => cell["nonresponders"],
+                  (cell) => cell.nonresponders,
                 ),
                 name: "Non-Responders",
                 type: "box",
@@ -174,19 +181,37 @@ export default function SummaryView({ data }) {
               },
             ]}
             layout={{
-              title: "Grouped Box Plot by Cell Type",
-              boxmode: "group", // <-- Crucial for side-by-side
-              xaxis: { title: "Cell Type" },
-              yaxis: { title: "Values" },
-              margin: { t: 50, l: 50, r: 30, b: 50 },
+              title: {
+                text: "Box plot of samples' relative frequency of responders and non-responders who have melanoma and received the tr1 treatment. (Samples' type is PBMC)",
+                font: { size: 16 },
+                x: 0.5,
+                xref: "container",
+                xanchor: "center",
+              },
+              boxmode: "group",
+              xaxis: {
+                title: {
+                  text: "Cell Type",
+                  font: { size: 14 },
+                },
+              },
+              yaxis: {
+                title: {
+                  text: "Relative Frequency",
+                  font: { size: 14 },
+                },
+              },
+              margin: { t: 120, l: 60, r: 30, b: 60 },
             }}
-            style={{ width: "100%", height: "400px" }}
+            config={{
+              responsive: true,
+            }}
+            style={{ width: "100%", height: "500px" }}
           />
         </div>
       </div>
     );
   };
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-center gap-6 p-6 max-w-full mx-auto">
@@ -195,7 +220,8 @@ export default function SummaryView({ data }) {
 
       <div className="p-4 border rounded-lg shadow max-w-md mx-auto">
         <h2 className="text-xl font-semibold mb-4 text-center">
-          Cell Type Comparison
+          Cell Type Relative Frequency Comparison of tr1 - melanoma subjects
+          with PBMC type.
         </h2>
 
         <div className="flex flex-col gap-4">
@@ -230,6 +256,16 @@ export default function SummaryView({ data }) {
             </p>
           </div>
         )}
+        <div className="p-4 mt-6 border-t max-w-md mx-auto text-center">
+          <h3 className="text-lg font-semibold text-blue-700">
+            Most Distinctive Cell Type
+          </h3>
+          <p className="mt-2">
+            <strong>{maxDiffCellType}</strong> shows the largest difference in
+            average relative frequency between responders and non-responders:{" "}
+            <strong>{maxDiffValue.toFixed(4)}</strong>
+          </p>
+        </div>
       </div>
       {renderPlot(plotData)}
     </div>
