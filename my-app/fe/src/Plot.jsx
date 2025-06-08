@@ -8,7 +8,7 @@ export default function BoxPlot({ plotData }) {
     <div className="flex justify-center">
       <div className="w-4/5 mx-auto p-8">
         <Plot
-          data={[
+          plotData={[
             {
               x: Object.keys(plotData).flatMap((cell) =>
                 Array(plotData[cell].responders.length).fill(cell),
