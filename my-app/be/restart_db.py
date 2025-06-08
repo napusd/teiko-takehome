@@ -13,7 +13,6 @@ def seed_data():
     subjects, samples, overviews = [], [], []
     subject_set = set()
     cell_types = list(df.columns[-5:])
-    print(df.columns)
     for index, row in df.iterrows():
         if row['subject'] not in subject_set:
             sbj = row['subject']

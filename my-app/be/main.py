@@ -83,7 +83,6 @@ def delete_db_entry():
         return jsonify({'message': f"Sample '{sample_id}' deleted successfully"}), 200
     except SQLAlchemyError as e:
             db.session.rollback()
-            print(e)
             return jsonify({'error': str(e)}), 500
 
 @app.route('/api/db/submit', methods=['POST'])
@@ -92,7 +91,6 @@ def submit_db_entry():
         data = request.json
         sample_id = data['sample']
         cell_types = ['b_cell', 'cd8_t_cell', 'cd4_t_cell', 'nk_cell', 'monocyte']
-        print(data)
 
         for type in cell_types:
             sample = Sample.query.filter_by(sample_id=sample_id, cell_type=type).first()
@@ -158,7 +156,6 @@ def response_plots():
 @app.route('/api/db/filter', methods=['POST'])
 def filter_data():
     filters = request.json
-    print(filters)
 
     # Start with base queries
     subject_query = db.session.query(Subject)
