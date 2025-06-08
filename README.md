@@ -6,7 +6,7 @@ This is a full-stack app as per the requirements of the write up. There is no wa
 ## Installation
 1. Create a virtual environment and source into it (I chose the name .teiko):
 ```
-python -m venv .teiko
+python3 -m venv .teiko
 source ./.teiko/bin/activate
 ```
 
